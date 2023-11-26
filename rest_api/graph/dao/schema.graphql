@@ -1,0 +1,5 @@
+type ExampleEntity @entity {
+  id: Bytes!
+  count: BigInt!
+  proposalId: BigInt! # uint256
+}
