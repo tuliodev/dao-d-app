@@ -7,8 +7,8 @@ import {
   afterAll
 } from "matchstick-as/assembly/index"
 import { BigInt, Address, Bytes } from "@graphprotocol/graph-ts"
-import { ProposalCancelled } from "../generated/schema"
-import { ProposalCancelled as ProposalCancelledEvent } from "../generated/DAO/DAO"
+import { ExampleEntity } from "../generated/schema"
+import { ProposalCancelled } from "../generated/DAO/DAO"
 import { handleProposalCancelled } from "../src/dao"
 import { createProposalCancelledEvent } from "./dao-utils"
 
@@ -29,13 +29,13 @@ describe("Describe entity assertions", () => {
   // For more test scenarios, see:
   // https://thegraph.com/docs/en/developer/matchstick/#write-a-unit-test
 
-  test("ProposalCancelled created and stored", () => {
-    assert.entityCount("ProposalCancelled", 1)
+  test("ExampleEntity created and stored", () => {
+    assert.entityCount("ExampleEntity", 1)
 
     // 0xa16081f360e3847006db660bae1c6d1b2e17ec2a is the default address used in newMockEvent() function
     assert.fieldEquals(
-      "ProposalCancelled",
-      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "ExampleEntity",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a",
       "proposalId",
       "234"
     )
