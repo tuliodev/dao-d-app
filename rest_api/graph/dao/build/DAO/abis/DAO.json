@@ -1,4 +1,4 @@
-const DAO_ABI = [
+[
   {
     "inputs": [
       {
@@ -418,6 +418,4 @@ const DAO_ABI = [
     "stateMutability": "view",
     "type": "function"
   }
-];
-
-exports.DAO_ABI = DAO_ABI;
+]
