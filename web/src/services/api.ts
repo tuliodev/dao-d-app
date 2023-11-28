@@ -1,7 +1,7 @@
 import { cacheExchange, Client, fetchExchange } from "urql";
 
 const urqlClient = new Client({
-  url: "https://api.studio.thegraph.com/query/59553/dao/0.0.3",
+  url: "https://api.studio.thegraph.com/query/59553/dao/v0.0.4",
   exchanges: [cacheExchange, fetchExchange],
 });
 
@@ -13,6 +13,7 @@ export const getFirst3Proposals = async () => {
       proposer
       targetContracts
       calldatas
+      title
       description
       endBlock
       startBlock

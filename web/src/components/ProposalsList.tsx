@@ -20,6 +20,7 @@ export default function ProposalsList({ web3ModalRef }: ProposalsListPropos) {
           {proposals.map((v, i) => {
             return (
               <Proposal
+                title={v.title}
                 description={v.description}
                 proposalId={v.proposalId}
                 web3ModalRef={web3ModalRef}

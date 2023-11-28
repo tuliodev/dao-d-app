@@ -1,17 +1,20 @@
 import { MouseEvent, useEffect, useState } from "react";
 
 import { Contract, utils } from "ethers";
+import { toast } from "react-toastify";
 
 import { DAO_ABI, DAO_CONTRACT_ADDRESS } from "@/helpers/constants";
 import { getProviderOrSigner } from "@/helpers/walletProvider";
 
 interface ProposalProps {
   proposalId: string;
+  title: string;
   description: string;
   web3ModalRef: any;
 }
 
 export default function Proposal({
+  title,
   description,
   proposalId,
   web3ModalRef,
@@ -86,10 +89,19 @@ export default function Proposal({
       await voteTx.wait();
 
       setVoting(false);
-      alert("Voted!");
+      toast(`Voted!`, {
+        hideProgressBar: true,
+        autoClose: 4000,
+        type: "success",
+      });
+
       getProposalVotes();
     } catch (error: any) {
-      alert(error?.message);
+      toast(`${error?.message}`, {
+        hideProgressBar: true,
+        autoClose: 4000,
+        type: "error",
+      });
     }
   }
 
@@ -107,7 +119,9 @@ export default function Proposal({
               {states[proposalState]}
             </p>
           </div>
-          <p className="font-bold text-2xl">{description}</p>
+
+          <p className="font-bold text-2xl">{title}</p>
+          <p className="text-lg text-slate-500">{description}</p>
 
           <div className="flex flex-col gap-2">
             <p>

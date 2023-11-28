@@ -1,9 +1,12 @@
 import { createContext, ReactNode, useState } from "react";
 
+import { toast } from "react-toastify";
+
 import { getFirst3Proposals } from "@/services/api";
 
 interface Proposal {
   proposalId: string;
+  title: string;
   description: string;
   startBlock: number;
 }
@@ -39,7 +42,11 @@ export function ProposalContextProvider({ children }: ProviderProps) {
         setProposals(serializedProposals);
       }
     } catch (error) {
-      alert("Error fetching proposal");
+      toast(`Error fetching proposal`, {
+        hideProgressBar: true,
+        autoClose: 4000,
+        type: "error",
+      });
     }
   }
 

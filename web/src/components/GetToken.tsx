@@ -1,5 +1,5 @@
 import { Contract } from "ethers";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 import { TOKEN_ABI, TOKEN_ADDRESS } from "@/helpers/constants";
 import { getProviderOrSigner } from "@/helpers/walletProvider";
@@ -21,7 +21,11 @@ const GetToken = ({ web3ModalRef }: GetTokenProps) => {
 
         await tokenContract.getToken(defaultTokenValue);
 
-        toast.success(`You won ${defaultTokenValue} tokens`);
+        toast(`You won ${defaultTokenValue} tokens`, {
+          hideProgressBar: true,
+          autoClose: 4000,
+          type: "success",
+        });
       }
     } catch (error) {
       console.log(error);

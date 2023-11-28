@@ -1,4 +1,5 @@
 import { providers } from "ethers";
+import { toast } from "react-toastify";
 
 export const getProviderOrSigner = async (
   needSigner = false,
@@ -10,7 +11,11 @@ export const getProviderOrSigner = async (
   const { chainId } = await web3Provider.getNetwork();
 
   if (chainId !== 11155111) {
-    window.alert("Change the network to Sepolia");
+    toast(`Change the network to Sepolia`, {
+      hideProgressBar: true,
+      autoClose: 4000,
+      type: "error",
+    });
     throw new Error("Change the network to Sepolia");
   }
 
