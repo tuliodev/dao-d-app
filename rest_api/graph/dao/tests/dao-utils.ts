@@ -5,7 +5,7 @@ import {
   ProposalCreated,
   ProposalExecuted,
   Voted
-} from "../generated/Dao/Dao"
+} from "../generated/DAO/DAO"
 
 export function createProposalCancelledEvent(
   proposalId: BigInt

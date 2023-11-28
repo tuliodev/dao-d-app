@@ -1,5 +1,41 @@
-type ExampleEntity @entity {
+type ProposalCancelled @entity(immutable: true) {
   id: Bytes!
-  count: BigInt!
   proposalId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ProposalCreated @entity(immutable: true) {
+  id: Bytes!
+  proposalId: BigInt! # uint256
+  proposer: Bytes! # address
+  targetContracts: [Bytes!]! # address[]
+  values: [BigInt!]! # uint256[]
+  targetsLength: [String!]! # string[]
+  calldatas: [Bytes!]! # bytes[]
+  startBlock: BigInt! # uint256
+  endBlock: BigInt! # uint256
+  description: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ProposalExecuted @entity(immutable: true) {
+  id: Bytes!
+  proposalId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Voted @entity(immutable: true) {
+  id: Bytes!
+  proposalId: BigInt! # uint256
+  Voter: Bytes! # address
+  support: Int! # uint8
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
 }

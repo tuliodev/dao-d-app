@@ -39,6 +39,7 @@ interface IDAO {
         bytes[] calldatas,
         uint startBlock,
         uint endBlock,
+        string title,
         string description
     );
 
@@ -51,6 +52,7 @@ interface IDAO {
         address[] memory targets,
         uint[] memory values,
         bytes[] memory calldatas,
+        string memory title,
         string memory description
     ) external returns (uint256);
 
@@ -59,6 +61,7 @@ interface IDAO {
         address[] memory targets,
         uint[] memory values,
         bytes[] memory calldatas,
+        bytes32 titleHash,
         bytes32 descriptionHash
     ) external returns (bool);
 
@@ -93,8 +96,8 @@ contract DAO is IDAO {
         votingDuration = _votingDuration;
     }
 
-    function hashProposal(address[] memory targets, uint256[] memory values, bytes[] memory calldatas, bytes32 descriptionHash) public pure returns(uint256) {
-        return uint256(keccak256(abi.encode(targets, values, calldatas, descriptionHash)));
+    function hashProposal(address[] memory targets, uint256[] memory values, bytes[] memory calldatas, bytes32 descriptionHash, bytes32 titleHash) public pure returns(uint256) {
+        return uint256(keccak256(abi.encode(targets, values, calldatas, descriptionHash, titleHash)));
     }
 
     function state(uint proposalId) public view returns (State proposalState) {
@@ -122,13 +125,13 @@ contract DAO is IDAO {
         return _proposalVotes[proposalId].voted[voter];
     }
 
-    function propose(address[] memory targets, uint[] memory values, bytes[] memory calldatas, string memory description) external returns (uint256) {
-        require(DaoToken.balanceOf(msg.sender) < 0, "You need Dao Token to create a proposal");
+    function propose(address[] memory targets, uint[] memory values, bytes[] memory calldatas, string memory title, string memory description) external returns (uint256) {
+        require(DaoToken.balanceOf(msg.sender) > 0, "You need Dao Token to create a proposal");
         require(targets.length == values.length, "Governor: invalid proposal length");
         require(targets.length == calldatas.length, "Governor: invalid proposal length");
         require(targets.length > 0, "Governor: empty proposal");
 
-        uint256 proposalId = hashProposal(targets, values, calldatas, keccak256(bytes(description)));
+        uint256 proposalId = hashProposal(targets, values, calldatas, keccak256(bytes(description)), keccak256(bytes(title)));
 
         ProposalCore storage proposal = _proposals[proposalId];
 
@@ -152,6 +155,7 @@ contract DAO is IDAO {
             calldatas,
             startBlock,
             endBlock,
+            title,
             description
         );
 
@@ -176,8 +180,8 @@ contract DAO is IDAO {
         emit Voted(proposalId, msg.sender, VoteType(support));
     }
 
-    function execute(uint256 proposalId, address[] memory targets, uint[] memory values, bytes[] memory calldatas, bytes32 descriptionHash) public returns (bool execution) {
-        uint256 GeneratedProposalId = hashProposal(targets, values, calldatas, descriptionHash);
+    function execute(uint256 proposalId, address[] memory targets, uint[] memory values, bytes[] memory calldatas, bytes32 titleHash, bytes32 descriptionHash) public returns (bool execution) {
+        uint256 GeneratedProposalId = hashProposal(targets, values, calldatas, descriptionHash, titleHash);
         require(proposalId == GeneratedProposalId, "governor: proposal ID doesn't match");
         require(state(proposalId) == State.ReadyForExecution, "Governor: proposal must be ready for execution");
 

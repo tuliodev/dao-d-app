@@ -3,12 +3,12 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
-    name: Dao
+    name: DAO
     network: sepolia
     source:
-      address: "0xc4Bb58Ffa114D4aF5A4F79fFa811ABab0e70f0f8"
-      abi: Dao
-      startBlock: 4766427
+      address: "0xA85a2516d5e871e416300E30A10082d345DC9F9f"
+      abi: DAO
+      startBlock: 4779651
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -19,8 +19,8 @@ dataSources:
         - ProposalExecuted
         - Voted
       abis:
-        - name: Dao
-          file: ./abis/Dao.json
+        - name: DAO
+          file: ./abis/DAO.json
       eventHandlers:
         - event: ProposalCancelled(indexed uint256)
           handler: handleProposalCancelled
