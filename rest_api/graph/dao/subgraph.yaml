@@ -24,7 +24,7 @@ dataSources:
       eventHandlers:
         - event: ProposalCancelled(indexed uint256)
           handler: handleProposalCancelled
-        - event: ProposalCreated(indexed uint256,address,address[],uint256[],string[],bytes[],uint256,uint256,string)
+        - event: ProposalCreated(indexed uint256,address,address[],uint256[],string[],bytes[],uint256,uint256,string,string)
           handler: handleProposalCreated
         - event: ProposalExecuted(indexed uint256)
           handler: handleProposalExecuted

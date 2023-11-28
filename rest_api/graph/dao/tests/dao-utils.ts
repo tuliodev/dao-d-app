@@ -33,6 +33,7 @@ export function createProposalCreatedEvent(
   calldatas: Array<Bytes>,
   startBlock: BigInt,
   endBlock: BigInt,
+  title: string,
   description: string
 ): ProposalCreated {
   let proposalCreatedEvent = changetype<ProposalCreated>(newMockEvent())
@@ -83,6 +84,9 @@ export function createProposalCreatedEvent(
       "endBlock",
       ethereum.Value.fromUnsignedBigInt(endBlock)
     )
+  )
+  proposalCreatedEvent.parameters.push(
+    new ethereum.EventParam("title", ethereum.Value.fromString(title))
   )
   proposalCreatedEvent.parameters.push(
     new ethereum.EventParam(
