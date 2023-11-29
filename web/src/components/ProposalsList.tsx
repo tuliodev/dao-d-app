@@ -23,6 +23,7 @@ export default function ProposalsList({ web3ModalRef }: ProposalsListPropos) {
                 title={v.title}
                 description={v.description}
                 proposalId={v.proposalId}
+                minimumVotes={v.minimumVotes}
                 web3ModalRef={web3ModalRef}
                 key={v.proposalId}
               />

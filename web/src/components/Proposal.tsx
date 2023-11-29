@@ -10,6 +10,7 @@ interface ProposalProps {
   proposalId: string;
   title: string;
   description: string;
+  minimumVotes: number;
   web3ModalRef: any;
 }
 
@@ -17,6 +18,7 @@ export default function Proposal({
   title,
   description,
   proposalId,
+  minimumVotes,
   web3ModalRef,
 }: ProposalProps) {
   const [proposalState, setProposalState] = useState<number>(0);
@@ -26,11 +28,13 @@ export default function Proposal({
   const [againstVotes, setAgainstVotes] = useState<string>("");
 
   const states = [
-    "📪 Not found",
+    "📪 Archived",
     "🛠️ Active",
-    "🏆 Success",
+    "❌ Rejected",
     "❌ Failed",
     "🚀 Ready For Execution",
+    "❌ Not reached votes",
+    "🏆 Executed",
   ];
 
   useEffect(() => {
@@ -116,7 +120,10 @@ export default function Proposal({
               ID: {proposalId.substring(0, 15) + "..."}
             </p>
             <p className="p-4 bg-yellow-200 w-full text-slate-900 border rounded-xl text-center">
-              {states[proposalState]}
+              {parseInt(forVotes) + parseInt(againstVotes) < minimumVotes &&
+              proposalState != 1
+                ? states[5]
+                : states[proposalState]}
             </p>
           </div>
 
@@ -128,6 +135,7 @@ export default function Proposal({
               For: {forVotes} | Against: {againstVotes}
             </p>
             <small>Vote below: </small>
+            <small>Minimum votes: {minimumVotes}</small>
             <div className="flex flex-wrap gap-5">
               {voting ? (
                 "Voting..."

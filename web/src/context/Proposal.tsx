@@ -2,13 +2,14 @@ import { createContext, ReactNode, useState } from "react";
 
 import { toast } from "react-toastify";
 
-import { getFirst3Proposals } from "@/services/api";
+import { getFirst5Proposals } from "@/services/api";
 
 interface Proposal {
   proposalId: string;
   title: string;
   description: string;
   startBlock: number;
+  minimumVotes: number;
 }
 
 interface ContextProps {
@@ -31,7 +32,7 @@ export function ProposalContextProvider({ children }: ProviderProps) {
 
   async function getProposals() {
     try {
-      const serializedProposals: Proposal[] = await getFirst3Proposals();
+      const serializedProposals: Proposal[] = await getFirst5Proposals();
 
       if (serializedProposals.length === 0) {
         setProposalsEnd(true);
