@@ -9,32 +9,26 @@ import { ProposalContext } from "@/context/Proposal";
 import { getProviderOrSigner } from "@/helpers/walletProvider";
 
 export default function Home() {
-  const [walletConnected, setWalletConeccted] = useState<boolean>(false);
-
-  const { getProposals } = useContext(ProposalContext);
+  const { walletConnected, connectWallet, isConnected } =
+    useContext(ProposalContext);
 
   const web3ModalRef = useRef<Web3Modal>();
 
   const handleConnect = async () => {
     try {
       await getProviderOrSigner(true, web3ModalRef);
-      setWalletConeccted(true);
+      connectWallet(true);
     } catch (error) {
       console.log(error);
     }
   };
 
   const handleDisconnect = async () => {
-    setWalletConeccted(false);
+    connectWallet(false);
   };
 
   useEffect(() => {
-    if (walletConnected) {
-      getProposals();
-    }
-  }, [walletConnected]);
-
-  useEffect(() => {
+    isConnected();
     if (!walletConnected) {
       web3ModalRef.current = new Web3Modal({
         network: "sepolia",
