@@ -46,7 +46,6 @@ async function executeProposal(proposalId, proposalTargets, proposalValues, prop
 }
 
 
-//  antes de executar fazer validacao do minimumVotes
 
 cron.schedule('* * * * *', () => {
     console.log('running task')
