@@ -5,8 +5,11 @@ const DAO_ABI = require('./helpers/constants').DAO_ABI;
 const { ethers } = require('hardhat');
 const program = new Command();
 
-let proposalDescription;
 let proposalTitle;
+let proposalDescription;
+let proposalMinimuMVotes;
+let proposalDeadLine;
+
 
 program
   .name('createProposal')
@@ -17,9 +20,13 @@ program.command('createProposal')
   .description('Create a proposal')
   .argument('<title>', 'proposal title')
   .argument('<description>', 'proposal description')
-  .action((title, description) => {
-    proposalTitle = title
+  .argument('<minimumVotes>', 'proposal minimumVotes')
+  .argument('<deadline>', 'proposal deadline')
+  .action((title, description, minimumVotes, deadline) => {
+    proposalTitle = title;
     proposalDescription = description;
+    proposalMinimuMVotes = minimumVotes;
+    proposalDeadLine = deadline;
   });
 
 program.parse();
@@ -42,7 +49,9 @@ async function createProposal() {
             proposalValues,
             proposalsCalldatas,
             proposalTitle,
-            proposalDescription
+            proposalDescription,
+            proposalMinimuMVotes,
+            proposalDeadLine
         )
 
         console.log("Creating proposal....")

@@ -1,32 +1,64 @@
-import { BigInt, Bytes } from "@graphprotocol/graph-ts"
+import { BigInt } from "@graphprotocol/graph-ts"
 import {
-
+  DAO,
+  ProposalCancelled,
   ProposalCreated,
+  ProposalExecuted,
+  Voted
+} from "../generated/DAO/DAO"
+import { ExampleEntity } from "../generated/schema"
 
-} from "../generated/Dao/Dao"
-import { Proposal } from "../generated/schema"
+export function handleProposalCancelled(event: ProposalCancelled): void {
+  // Entities can be loaded from the store using a string ID; this ID
+  // needs to be unique across all entities of the same type
+  let entity = ExampleEntity.load(event.transaction.from)
 
-export function handleProposalCreated(event: ProposalCreated): void {
-
-  let entity = Proposal.load(event.params.proposalId.toString()+'-'+event.block.timestamp.toString()+'-'+event.transaction.from.toString());
-
+  // Entities only exist after they have been saved to the store;
+  // `null` checks allow to create entities on demand
   if (!entity) {
-    entity = new Proposal(event.params.proposalId.toString()+'-'+event.block.timestamp.toString()+'-'+event.transaction.from.toString())  
-    
+    entity = new ExampleEntity(event.transaction.from)
+
+    // Entity fields can be set using simple assignments
+    entity.count = BigInt.fromI32(0)
   }
-  
+
+  // BigInt and BigDecimal math are supported
+  entity.count = entity.count + BigInt.fromI32(1)
+
+  // Entity fields can be set based on event parameters
   entity.proposalId = event.params.proposalId
-  entity.proposer = event.params.proposer
-  entity.targetContracts = changetype<Bytes[]>(event.params.targetContracts)
-  entity.proposer = event.params.proposer
-  entity.values = event.params.values
-  entity.calldatas = event.params.calldatas
-  entity.startBlock = event.params.startBlock
-  entity.endBlock = event.params.endBlock
-  entity.description = event.params.description
-  entity.title = event.params.title
 
-
+  // Entities can be written to the store with `.save()`
   entity.save()
+
+  // Note: If a handler doesn't require existing field values, it is faster
+  // _not_ to load the entity from the store. Instead, create it fresh with
+  // `new Entity(...)`, set the fields that should be updated and save the
+  // entity back to the store. Fields that were not set or unset remain
+  // unchanged, allowing for partial updates to be applied.
+
+  // It is also possible to access smart contracts from mappings. For
+  // example, the contract that has emitted the event can be connected to
+  // with:
+  //
+  // let contract = Contract.bind(event.address)
+  //
+  // The following functions can then be called on this contract to access
+  // state variables and other data:
+  //
+  // - contract.DaoToken(...)
+  // - contract._proposalVotes(...)
+  // - contract._proposals(...)
+  // - contract.execute(...)
+  // - contract.hasVoted(...)
+  // - contract.hashProposal(...)
+  // - contract.numProposals(...)
+  // - contract.propose(...)
+  // - contract.state(...)
 }
 
+export function handleProposalCreated(event: ProposalCreated): void {}
+
+export function handleProposalExecuted(event: ProposalExecuted): void {}
+
+export function handleVoted(event: Voted): void {}

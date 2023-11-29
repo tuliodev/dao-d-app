@@ -10,4 +10,6 @@ type Proposal @entity {
   endBlock: BigInt
   title: String
   description: String
+  minimumVotes: BigInt! #uint256
+  votingDuration: BigInt! #uint256
 }

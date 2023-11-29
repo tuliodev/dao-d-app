@@ -1,13 +1,5 @@
-type Proposal @entity {
-  id: String!
-  proposalId: BigInt! #uint256
-  proposer: Bytes! #address
-  targetContracts: [Bytes!]
-  values: [BigInt!]
-  targetsLength: [String!]
-  calldatas: [Bytes!]
-  startBlock: BigInt
-  endBlock: BigInt
-  title: String
-  description: String
+type ExampleEntity @entity {
+  id: Bytes!
+  count: BigInt!
+  proposalId: BigInt! # uint256
 }

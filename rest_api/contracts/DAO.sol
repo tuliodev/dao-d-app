@@ -11,9 +11,11 @@ interface IDAO {
     enum State {
         NotFound,
         Active,
-        Success,
+        Rejected,
         Failed,
-        ReadyForExecution
+        ReadyForExecution,
+        NotReachedVotes,
+        Executed
     }
 
     struct ProposalVote {
@@ -27,6 +29,7 @@ interface IDAO {
         uint voteEnd;
         bool executed;
         bool cancelled;
+        uint minimumVotes;
         State proposalState;
     }
 
@@ -40,7 +43,9 @@ interface IDAO {
         uint startBlock,
         uint endBlock,
         string title,
-        string description
+        string description,
+        uint256 minimumVotes,
+        uint256 votingDuration
     );
 
     event ProposalExecuted(uint256 indexed proposalId);
@@ -53,7 +58,9 @@ interface IDAO {
         uint[] memory values,
         bytes[] memory calldatas,
         string memory title,
-        string memory description
+        string memory description,
+        uint256 minimumVotes,
+        uint256 votingDuration
     ) external returns (uint256);
 
     function execute(
@@ -62,7 +69,9 @@ interface IDAO {
         uint[] memory values,
         bytes[] memory calldatas,
         bytes32 titleHash,
-        bytes32 descriptionHash
+        bytes32 descriptionHash,
+        uint256 minimumVotes,
+        uint256 votingDuration
     ) external returns (bool);
 
     function vote(uint256 proposalId, uint8 support) external;
@@ -83,21 +92,22 @@ interface IERC20 {
 
 contract DAO is IDAO {
 
+    address ownerAdress_;
+
     mapping (uint256 => ProposalVote) public _proposalVotes;
     mapping (uint256 => ProposalCore) public _proposals;
 
     uint256 public numProposals;
-    uint256 public votingDuration;
-
+    
     IERC20 public DaoToken;
 
-    constructor(address _DaoToken, uint256 _votingDuration) {
+    constructor(address _DaoToken) {
         DaoToken = IERC20(_DaoToken);
-        votingDuration = _votingDuration;
+        ownerAdress_ = msg.sender;
     }
 
-    function hashProposal(address[] memory targets, uint256[] memory values, bytes[] memory calldatas, bytes32 descriptionHash, bytes32 titleHash) public pure returns(uint256) {
-        return uint256(keccak256(abi.encode(targets, values, calldatas, descriptionHash, titleHash)));
+    function hashProposal(address[] memory targets, uint256[] memory values, bytes[] memory calldatas, bytes32 descriptionHash, bytes32 titleHash, uint256 minimumVotes, uint256 votingDuration) public pure returns(uint256) {
+        return uint256(keccak256(abi.encode(targets, values, calldatas, descriptionHash, titleHash, minimumVotes, votingDuration)));
     }
 
     function state(uint proposalId) public view returns (State proposalState) {
@@ -108,6 +118,7 @@ contract DAO is IDAO {
             return State.NotFound;
         }
 
+
         if (currentBlock < proposal.voteEnd && proposal.proposalState == State.Active) {
             return State.Active;            
         }
@@ -116,7 +127,16 @@ contract DAO is IDAO {
             return State.Failed;
         }
 
-        if (currentBlock > proposal.voteEnd && proposal.executed == false && proposal.cancelled == false) {
+        if (proposal.voteEnd <= currentBlock && _proposalVotes[proposalId].againVotes + _proposalVotes[proposalId].againVotes < proposal.minimumVotes) {
+            return State.NotReachedVotes;
+        }
+
+        if (currentBlock > proposal.voteEnd && _proposalVotes[proposalId].againVotes >  _proposalVotes[proposalId].forVotes) {
+            return State.Rejected;
+        }
+
+
+        if (currentBlock > proposal.voteEnd && proposal.executed == false && proposal.cancelled == false && _proposalVotes[proposalId].againVotes <  _proposalVotes[proposalId].forVotes) {
             return State.ReadyForExecution;
         }
     }
@@ -125,20 +145,21 @@ contract DAO is IDAO {
         return _proposalVotes[proposalId].voted[voter];
     }
 
-    function propose(address[] memory targets, uint[] memory values, bytes[] memory calldatas, string memory title, string memory description) external returns (uint256) {
+    function propose(address[] memory targets, uint[] memory values, bytes[] memory calldatas, string memory title, string memory description, uint256 minimumVotes, uint256 votingDuration) external returns (uint256) {
+        require(msg.sender == ownerAdress_, "Only Contract Owner can create a Proposal");
         require(DaoToken.balanceOf(msg.sender) > 0, "You need Dao Token to create a proposal");
         require(targets.length == values.length, "Governor: invalid proposal length");
         require(targets.length == calldatas.length, "Governor: invalid proposal length");
         require(targets.length > 0, "Governor: empty proposal");
 
-        uint256 proposalId = hashProposal(targets, values, calldatas, keccak256(bytes(description)), keccak256(bytes(title)));
+        uint256 proposalId = hashProposal(targets, values, calldatas, keccak256(bytes(description)), keccak256(bytes(title)), minimumVotes, votingDuration);
 
         ProposalCore storage proposal = _proposals[proposalId];
 
         require(proposal.proposalState != State.Active, "Governal: Duplicate proposal");
 
         uint startBlock = block.number;
-        uint endBlock = block.number + votingDuration;
+        uint endBlock = block.timestamp + (votingDuration * 1 minutes);
 
         proposal.voteStart = startBlock;
         proposal.voteEnd = endBlock;
@@ -156,7 +177,9 @@ contract DAO is IDAO {
             startBlock,
             endBlock,
             title,
-            description
+            description,
+            minimumVotes,
+            votingDuration
         );
 
         return proposalId;
@@ -180,8 +203,9 @@ contract DAO is IDAO {
         emit Voted(proposalId, msg.sender, VoteType(support));
     }
 
-    function execute(uint256 proposalId, address[] memory targets, uint[] memory values, bytes[] memory calldatas, bytes32 titleHash, bytes32 descriptionHash) public returns (bool execution) {
-        uint256 GeneratedProposalId = hashProposal(targets, values, calldatas, descriptionHash, titleHash);
+    function execute(uint256 proposalId, address[] memory targets, uint[] memory values, bytes[] memory calldatas, bytes32 titleHash, bytes32 descriptionHash, uint256 minimumVotes, uint256 votingDuration) public returns (bool execution) {
+          require(msg.sender == ownerAdress_, "Only Contract Owner can execute a Proposal");
+        uint256 GeneratedProposalId = hashProposal(targets, values, calldatas, descriptionHash, titleHash, minimumVotes, votingDuration);
         require(proposalId == GeneratedProposalId, "governor: proposal ID doesn't match");
         require(state(proposalId) == State.ReadyForExecution, "Governor: proposal must be ready for execution");
 
@@ -200,6 +224,7 @@ contract DAO is IDAO {
                 (bool success, ) = targets[i].call{value: values[i]}(calldatas[i]);
 
                 if (success) {
+                    _proposals[proposalId].proposalState = State.Executed;
                     return true;
                 } else {
                     revert("Governor: call reverted without error message");

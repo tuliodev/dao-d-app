@@ -6,19 +6,28 @@ dataSources:
     name: DAO
     network: sepolia
     source:
-      address: "0xA85a2516d5e871e416300E30A10082d345DC9F9f"
+      address: "0xF27B71b3E2927007eDe796A39127B101da1faB47"
       abi: DAO
-      startBlock: 4779651
+      startBlock: 4785864
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
+        - ProposalCancelled
         - ProposalCreated
+        - ProposalExecuted
+        - Voted
       abis:
         - name: DAO
           file: ./abis/DAO.json
       eventHandlers:
-        - event: ProposalCreated(indexed uint256,address,address[],uint256[],string[],bytes[],uint256,uint256,string,string)
+        - event: ProposalCancelled(indexed uint256)
+          handler: handleProposalCancelled
+        - event: ProposalCreated(indexed uint256,address,address[],uint256[],string[],bytes[],uint256,uint256,string,string,uint256,uint256)
           handler: handleProposalCreated
+        - event: ProposalExecuted(indexed uint256)
+          handler: handleProposalExecuted
+        - event: Voted(indexed uint256,indexed address,uint8)
+          handler: handleVoted
       file: ./src/dao.ts

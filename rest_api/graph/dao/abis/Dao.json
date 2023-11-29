@@ -1,12 +1,7 @@
 [
   {
     "inputs": [
-      { "internalType": "address", "name": "_DaoToken", "type": "address" },
-      {
-        "internalType": "uint256",
-        "name": "_votingDuration",
-        "type": "uint256"
-      }
+      { "internalType": "address", "name": "_DaoToken", "type": "address" }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -86,6 +81,18 @@
         "internalType": "string",
         "name": "description",
         "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "minimumVotes",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "votingDuration",
+        "type": "uint256"
       }
     ],
     "name": "ProposalCreated",
@@ -156,6 +163,7 @@
       { "internalType": "uint256", "name": "voteEnd", "type": "uint256" },
       { "internalType": "bool", "name": "executed", "type": "bool" },
       { "internalType": "bool", "name": "cancelled", "type": "bool" },
+      { "internalType": "uint256", "name": "minimumVotes", "type": "uint256" },
       {
         "internalType": "enum IDAO.State",
         "name": "proposalState",
@@ -176,7 +184,9 @@
         "internalType": "bytes32",
         "name": "descriptionHash",
         "type": "bytes32"
-      }
+      },
+      { "internalType": "uint256", "name": "minimumVotes", "type": "uint256" },
+      { "internalType": "uint256", "name": "votingDuration", "type": "uint256" }
     ],
     "name": "execute",
     "outputs": [
@@ -205,7 +215,9 @@
         "name": "descriptionHash",
         "type": "bytes32"
       },
-      { "internalType": "bytes32", "name": "titleHash", "type": "bytes32" }
+      { "internalType": "bytes32", "name": "titleHash", "type": "bytes32" },
+      { "internalType": "uint256", "name": "minimumVotes", "type": "uint256" },
+      { "internalType": "uint256", "name": "votingDuration", "type": "uint256" }
     ],
     "name": "hashProposal",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
@@ -225,7 +237,9 @@
       { "internalType": "uint256[]", "name": "values", "type": "uint256[]" },
       { "internalType": "bytes[]", "name": "calldatas", "type": "bytes[]" },
       { "internalType": "string", "name": "title", "type": "string" },
-      { "internalType": "string", "name": "description", "type": "string" }
+      { "internalType": "string", "name": "description", "type": "string" },
+      { "internalType": "uint256", "name": "minimumVotes", "type": "uint256" },
+      { "internalType": "uint256", "name": "votingDuration", "type": "uint256" }
     ],
     "name": "propose",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
@@ -255,13 +269,6 @@
     "name": "vote",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "votingDuration",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
     "type": "function"
   }
 ]

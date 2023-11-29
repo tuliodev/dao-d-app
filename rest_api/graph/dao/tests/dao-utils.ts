@@ -34,7 +34,9 @@ export function createProposalCreatedEvent(
   startBlock: BigInt,
   endBlock: BigInt,
   title: string,
-  description: string
+  description: string,
+  minimumVotes: BigInt,
+  votingDuration: BigInt
 ): ProposalCreated {
   let proposalCreatedEvent = changetype<ProposalCreated>(newMockEvent())
 
@@ -92,6 +94,18 @@ export function createProposalCreatedEvent(
     new ethereum.EventParam(
       "description",
       ethereum.Value.fromString(description)
+    )
+  )
+  proposalCreatedEvent.parameters.push(
+    new ethereum.EventParam(
+      "minimumVotes",
+      ethereum.Value.fromUnsignedBigInt(minimumVotes)
+    )
+  )
+  proposalCreatedEvent.parameters.push(
+    new ethereum.EventParam(
+      "votingDuration",
+      ethereum.Value.fromUnsignedBigInt(votingDuration)
     )
   )
 

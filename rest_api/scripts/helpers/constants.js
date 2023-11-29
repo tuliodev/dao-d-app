@@ -1,15 +1,10 @@
-const DAO_ABI = [
+const DAO_ABI =  [
   {
     "inputs": [
       {
         "internalType": "address",
         "name": "_DaoToken",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_votingDuration",
-        "type": "uint256"
       }
     ],
     "stateMutability": "nonpayable",
@@ -90,6 +85,18 @@ const DAO_ABI = [
         "internalType": "string",
         "name": "description",
         "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "minimumVotes",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "votingDuration",
+        "type": "uint256"
       }
     ],
     "name": "ProposalCreated",
@@ -201,6 +208,11 @@ const DAO_ABI = [
         "type": "bool"
       },
       {
+        "internalType": "uint256",
+        "name": "minimumVotes",
+        "type": "uint256"
+      },
+      {
         "internalType": "enum IDAO.State",
         "name": "proposalState",
         "type": "uint8"
@@ -240,6 +252,16 @@ const DAO_ABI = [
         "internalType": "bytes32",
         "name": "descriptionHash",
         "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minimumVotes",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "votingDuration",
+        "type": "uint256"
       }
     ],
     "name": "execute",
@@ -303,6 +325,16 @@ const DAO_ABI = [
         "internalType": "bytes32",
         "name": "titleHash",
         "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minimumVotes",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "votingDuration",
+        "type": "uint256"
       }
     ],
     "name": "hashProposal",
@@ -355,6 +387,16 @@ const DAO_ABI = [
         "internalType": "string",
         "name": "description",
         "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minimumVotes",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "votingDuration",
+        "type": "uint256"
       }
     ],
     "name": "propose",
@@ -403,19 +445,6 @@ const DAO_ABI = [
     "name": "vote",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "votingDuration",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   }
 ];
