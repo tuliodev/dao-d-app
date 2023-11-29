@@ -1,6 +1,6 @@
 specVersion: 0.0.5
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum
     name: DAO
@@ -17,8 +17,9 @@ dataSources:
         - ProposalCreated
       abis:
         - name: DAO
-          file: ./abis/DAO.json
+          file: DAO/abis/DAO.json
       eventHandlers:
-        - event: ProposalCreated(indexed uint256,address,address[],uint256[],string[],bytes[],uint256,uint256,string,string,uint256,uint256)
+        - event: ProposalCreated(indexed
+            uint256,address,address[],uint256[],string[],bytes[],uint256,uint256,string,string,uint256,uint256)
           handler: handleProposalCreated
-      file: ./src/dao.ts
+      file: DAO/DAO.wasm

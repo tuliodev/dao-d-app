@@ -114,6 +114,10 @@ contract DAO is IDAO {
         uint currentBlock = block.number;
         ProposalCore storage proposal = _proposals[proposalId];
 
+        if (proposal.executed == true) {
+            return State.Executed;
+        }
+
         if (proposal.proposalState == State.NotFound) {
             return State.NotFound;
         }
@@ -127,7 +131,7 @@ contract DAO is IDAO {
             return State.Failed;
         }
 
-        if (proposal.voteEnd <= currentBlock && _proposalVotes[proposalId].againVotes + _proposalVotes[proposalId].againVotes < proposal.minimumVotes) {
+        if (proposal.voteEnd <= currentBlock && (_proposalVotes[proposalId].againVotes + _proposalVotes[proposalId].againVotes) < proposal.minimumVotes) {
             return State.NotReachedVotes;
         }
 
@@ -136,7 +140,7 @@ contract DAO is IDAO {
         }
 
 
-        if (currentBlock > proposal.voteEnd && proposal.executed == false && proposal.cancelled == false && _proposalVotes[proposalId].againVotes <  _proposalVotes[proposalId].forVotes) {
+        if (currentBlock > proposal.voteEnd && proposal.executed == false && proposal.cancelled == false && _proposalVotes[proposalId].againVotes <  _proposalVotes[proposalId].forVotes && (_proposalVotes[proposalId].againVotes + _proposalVotes[proposalId].againVotes) >= proposal.minimumVotes) {
             return State.ReadyForExecution;
         }
     }
@@ -159,7 +163,7 @@ contract DAO is IDAO {
         require(proposal.proposalState != State.Active, "Governal: Duplicate proposal");
 
         uint startBlock = block.number;
-        uint endBlock = block.timestamp + (votingDuration * 1 minutes);
+        uint endBlock = (votingDuration * 10) + block.number; 
 
         proposal.voteStart = startBlock;
         proposal.voteEnd = endBlock;
@@ -204,13 +208,13 @@ contract DAO is IDAO {
     }
 
     function execute(uint256 proposalId, address[] memory targets, uint[] memory values, bytes[] memory calldatas, bytes32 titleHash, bytes32 descriptionHash, uint256 minimumVotes, uint256 votingDuration) public returns (bool execution) {
-          require(msg.sender == ownerAdress_, "Only Contract Owner can execute a Proposal");
+        require(msg.sender == ownerAdress_, "Only Contract Owner can execute a Proposal");
         uint256 GeneratedProposalId = hashProposal(targets, values, calldatas, descriptionHash, titleHash, minimumVotes, votingDuration);
         require(proposalId == GeneratedProposalId, "governor: proposal ID doesn't match");
         require(state(proposalId) == State.ReadyForExecution, "Governor: proposal must be ready for execution");
 
         ProposalVote storage votes = _proposalVotes[proposalId];
-
+        
         if (votes.forVotes < votes.againVotes || (votes.forVotes == 0 && votes.againVotes == 0)) {
             _proposals[proposalId].cancelled = true;
             emit ProposalCancelled(proposalId);
@@ -218,18 +222,11 @@ contract DAO is IDAO {
         } else {
             _proposals[proposalId].executed = true;
 
+
             emit ProposalExecuted(proposalId);
 
-            for (uint256 i = 0; i < targets.length; ++i) {
-                (bool success, ) = targets[i].call{value: values[i]}(calldatas[i]);
 
-                if (success) {
-                    _proposals[proposalId].proposalState = State.Executed;
-                    return true;
-                } else {
-                    revert("Governor: call reverted without error message");
-                }
-            }
+            return true;
         }
     }
 

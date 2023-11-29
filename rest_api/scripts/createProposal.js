@@ -1,10 +1,9 @@
 require('dotenv').config();
 const { Command } = require('commander');
 const { Contract, JsonRpcProvider } = require('ethers');
-const DAO_ABI = require('./helpers/constants').DAO_ABI;
 const { ethers } = require('hardhat');
 const program = new Command();
-
+const DAO_ABI = require('../artifacts/contracts/DAO.sol/DAO.json').abi;
 let proposalTitle;
 let proposalDescription;
 let proposalMinimuMVotes;

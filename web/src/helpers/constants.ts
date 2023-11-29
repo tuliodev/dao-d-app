@@ -1,5 +1,5 @@
 export const DAO_CONTRACT_ADDRESS =
-  "0xF27B71b3E2927007eDe796A39127B101da1faB47";
+  "0x88D2F3B98bBA757f5c9C7382F19b51257781eA44";
 export const DAO_ABI = [
   {
     inputs: [
@@ -450,7 +450,7 @@ export const DAO_ABI = [
     type: "function",
   },
 ];
-export const TOKEN_ADDRESS = "0x8D68C74c759fcC89815c13b1dAD30514324ca152";
+export const TOKEN_ADDRESS = "0xB48D365FDbeF9d91132323Bb019B84b7766580aC";
 export const TOKEN_ABI = [
   {
     inputs: [
