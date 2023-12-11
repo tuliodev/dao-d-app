@@ -6,9 +6,9 @@ dataSources:
     name: DAO
     network: sepolia
     source:
-      address: "0x88D2F3B98bBA757f5c9C7382F19b51257781eA44"
+      address: "0x922EF82a9B76AE809d46108Fc4EA7F0e62Ba9FEd"
       abi: DAO
-      startBlock: 4787372
+      startBlock: 4862650
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
