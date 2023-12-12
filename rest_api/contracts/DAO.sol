@@ -82,9 +82,6 @@ interface IDAO {
 
 }
 
-interface INFTCollection {
-     function balanceOf(address _owner) external view returns(uint);
-}
 
 interface IERC20 {
     function balanceOf(address _owner) external view returns(uint);
