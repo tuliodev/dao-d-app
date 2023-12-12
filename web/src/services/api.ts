@@ -1,7 +1,7 @@
 import { cacheExchange, Client, fetchExchange } from "urql";
 
 const urqlClient = new Client({
-  url: "https://api.studio.thegraph.com/query/59553/dao/1.0.4",
+  url: "https://api.studio.thegraph.com/query/59553/dao/1.0.7",
   exchanges: [cacheExchange, fetchExchange],
 });
 
